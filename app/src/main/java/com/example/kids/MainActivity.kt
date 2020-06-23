@@ -1,14 +1,14 @@
 package com.example.kids
 
-import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ScrollView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -16,22 +16,37 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val imageView = ImageView(this)
+        mapItems();
+    }
 
+    fun mapItems() {
         for (i in 0..9) {
-            val image = ImageView(this)
-            imageView.layoutParams= LinearLayout.LayoutParams(400, 400)
-            imageView.x= 20F // setting margin from left
-            imageView.y= 20F // setting margin from top
+            val textView = TextView(this)
+            val imageView = ImageView(this)
+            textView.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
-            val imgResId = R.drawable.group
-            var resId = imgResId
-            // Adds the view to the layout
-            imageView.setImageResource(resId)
+            val lpImage = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
 
-            val layout = findViewById<ScrollView>(R.id.scrollView)
+            lpImage.setMargins(-25, 25, 0, 0)
+            imageView.layoutParams = lpImage
+            imageView.adjustViewBounds = true
 
-            layout?.addView(imageView)
+            val imgResId = R.drawable.item
+            imageView.setImageResource(imgResId)
+
+            val lpText = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            lpText.setMargins(100, 0, 0, 150)
+            textView.layoutParams = lpText
+            textView.text = "GEEKSFORGEEKS"
+
+            linearLayout?.addView(imageView)
+            linearLayout?.addView(textView)
         }
     }
 
