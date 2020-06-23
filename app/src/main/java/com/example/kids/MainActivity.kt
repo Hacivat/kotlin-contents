@@ -41,9 +41,9 @@ class MainActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            lpText.setMargins(100, 0, 0, 150)
+            lpText.setMargins(0, 0, 0, 0)
             textView.layoutParams = lpText
-            textView.text = "GEEKSFORGEEKS"
+            textView.text = "Test"
 
             linearLayout?.addView(imageView)
             linearLayout?.addView(textView)
