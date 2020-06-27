@@ -10,11 +10,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONArray
-import java.net.HttpURLConnection
-import java.net.URL
 
 
 class MainActivity : AppCompatActivity() {
@@ -65,20 +63,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getItems() {
-        val url = "http://localhost:8000/api/tales/titles/tr"
+        val url = "http:10.0.2.2:8000/api/tales/titles/tr"
+        val queue = Volley.newRequestQueue(this)
 
-        var res: String
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            Response.Listener { response ->
-                res = response.toString()
-                mapItems(res)
+        val stringRequest = StringRequest(Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                println(response)
+                mapItems(response)
             },
-            Response.ErrorListener { error ->
-                res = "Hata Oluştu"
-                mapItems(res)
-            }
-        )
+            Response.ErrorListener { error -> println(error) })
+
+        queue.add(stringRequest)
     }
 
     fun openTalePage(view: View) {
