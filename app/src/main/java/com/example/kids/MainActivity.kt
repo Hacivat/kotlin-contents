@@ -1,7 +1,6 @@
 package com.example.kids
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
@@ -9,6 +8,9 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import java.net.HttpURLConnection
@@ -20,10 +22,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mapItems();
+        getItems();
     }
 
-     private fun mapItems() {
+     private fun mapItems(titles: String) {
         for (i in 0..9) {
             //image config
             val imageView = ImageView(this)
@@ -62,37 +64,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTitles() {
-        val url = "http://localhost:8000/tales/titles/tr"
-    }
+    private fun getItems() {
+        val url = "http://localhost:8000/api/tales/titles/tr"
 
-
-    inner class AsyncTaskHandleJson: AsyncTask<String, String, String>() {
-        override fun doInBackground(vararg url: String?): String {
-            var text: String
-            val connection = URL(url[0]).openConnection() as HttpURLConnection
-            try {
-                connection.connect()
-                text = connection.inputStream.use { it.reader().use{ reader->reader.readText() } }
-            } finally {
-                connection.disconnect()
+        var res: String
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            Response.Listener { response ->
+                res = response.toString()
+                mapItems(res)
+            },
+            Response.ErrorListener { error ->
+                res = "Hata Oluştu"
+                mapItems(res)
             }
-
-            return text
-        }
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-            handleJson(result)
-        }
-
-        private fun handleJson(jsonString: String?) {
-            val jsonArray = JSONArray(jsonString)
-        }
-
+        )
     }
-
-
-
 
     fun openTalePage(view: View) {
         val intent = Intent(this, Tales::class.java)
