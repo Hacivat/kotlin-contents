@@ -15,6 +15,7 @@ import com.android.volley.toolbox.Volley
 import com.beust.klaxon.Klaxon
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +64,17 @@ class MainActivity : AppCompatActivity() {
                  relativeLayout.addView(imageView)
                  relativeLayout.addView(textView)
 
+                 relativeLayout.isClickable = true
+
+                 relativeLayout.setOnClickListener {
+                     startActivity(
+                         Intent(
+                             this,
+                             Content::class.java
+                         ).apply { putExtra("uuid", item.uuid) }
+                     )
+                 }
+
                  linearLayout?.addView(relativeLayout)
              }
          }
@@ -86,9 +98,8 @@ class MainActivity : AppCompatActivity() {
         queue.add(stringRequest)
     }
 
-    fun openTalePage(view: View) {
-        val intent = Intent(this, Tales::class.java)
+    fun openContentPage(view: View) {
+        val intent = Intent(this, Content::class.java)
         startActivity(intent)
     }
 }
-
