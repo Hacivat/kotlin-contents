@@ -1,5 +1,7 @@
 package com.example.kids
 
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
@@ -19,9 +21,16 @@ class Content : AppCompatActivity() {
 
     private fun fillAreas(content: ContentData) {
         val titleTextView: TextView? = findViewById(R.id.contentTitle)
+        val contentTextView: TextView? = findViewById(R.id.contentText)
 
         if (titleTextView != null) {
             titleTextView.text = content.title_tr
+            titleTextView.setBackgroundColor(Color.parseColor("#73000000"));
+        }
+
+        if (contentTextView != null) {
+            contentTextView.text = content.text_tr
+            contentTextView.setBackgroundColor(Color.parseColor("#73000000"));
         }
     }
 
