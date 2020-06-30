@@ -2,12 +2,15 @@ package com.example.kids
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.RetryPolicy
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.beust.klaxon.Klaxon
@@ -15,6 +18,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        var lang: String = "tr"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,10 +54,25 @@ class MainActivity : AppCompatActivity() {
                      RelativeLayout.LayoutParams.WRAP_CONTENT,
                      RelativeLayout.LayoutParams.WRAP_CONTENT
                  )
-                 lpText.setMargins(75, 120, 0, 0)
+                 val displayMetrics = DisplayMetrics()
+                 windowManager.defaultDisplay.getMetrics(displayMetrics)
+                 var width = displayMetrics.widthPixels
+                 var height = displayMetrics.heightPixels
+
+                 var padded: Boolean = false
+                 if (height <= 800) {
+                     textView.setPadding(20, 63,0,0)
+                     padded = true
+                 }
+                 if (height <= 2100 && !padded) {
+                     textView.setPadding(20, 120,0,0)
+                     padded = true
+                 }
+                 if (!padded) { textView.setPadding(20, 140,0,0) }
+
                  textView.layoutParams = lpText
                  textView.text = item.title
-                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F);
+                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18F);
 
                  //item layout config
                  val relativeLayout = RelativeLayout(this);
@@ -84,14 +106,22 @@ class MainActivity : AppCompatActivity() {
     data class Title(val uuid: String, val title: String)
 
     private fun getItems() {
-        val url = "http:10.0.2.2:8000/api/tales/titles/tr"
+        val url = "http:10.0.2.2:8000/api/tales/titles/$lang"
         val queue = Volley.newRequestQueue(this)
 
         val stringRequest = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
+                findViewById<ProgressBar>(R.id.progressBar1)?.visibility = View.GONE;
                 mapItems(response)
             },
             Response.ErrorListener { error -> println(error) })
+
+        stringRequest.retryPolicy = object : RetryPolicy {
+            override fun getCurrentTimeout(): Int { return 50000 }
+            override fun getCurrentRetryCount(): Int { return 50000 }
+            @Throws(VolleyError::class)
+            override fun retry(error: VolleyError) { }
+        }
 
         queue.add(stringRequest)
     }
@@ -99,13 +129,15 @@ class MainActivity : AppCompatActivity() {
     fun search(view: View) {
         val searchEditText: EditText? = findViewById(R.id.searchEditText)
         val keyword: String? = searchEditText?.text.toString()
-
-        val url = "http:10.0.2.2:8000/api/tales/titles/tr/$keyword"
+        val url = "http:10.0.2.2:8000/api/tales/titles/$lang/$keyword"
         val queue = Volley.newRequestQueue(this)
+
+        findViewById<LinearLayout>(R.id.linearLayout)?.removeAllViews();
+        findViewById<ProgressBar>(R.id.progressBar1)?.visibility = View.VISIBLE;
 
         val stringRequest = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
-                findViewById<LinearLayout>(R.id.linearLayout)?.removeAllViews();
+                findViewById<ProgressBar>(R.id.progressBar1)?.visibility = View.GONE;
                 mapItems(response)
             },
             Response.ErrorListener { error -> println(error) })
