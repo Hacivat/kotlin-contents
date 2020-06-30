@@ -4,9 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.Response
@@ -98,8 +96,20 @@ class MainActivity : AppCompatActivity() {
         queue.add(stringRequest)
     }
 
-    fun openContentPage(view: View) {
-        val intent = Intent(this, Content::class.java)
-        startActivity(intent)
+    fun search(view: View) {
+        val searchEditText: EditText? = findViewById(R.id.searchEditText)
+        val keyword: String? = searchEditText?.text.toString()
+
+        val url = "http:10.0.2.2:8000/api/tales/titles/tr/$keyword"
+        val queue = Volley.newRequestQueue(this)
+
+        val stringRequest = StringRequest(Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                findViewById<LinearLayout>(R.id.linearLayout)?.removeAllViews();
+                mapItems(response)
+            },
+            Response.ErrorListener { error -> println(error) })
+
+        queue.add(stringRequest)
     }
 }

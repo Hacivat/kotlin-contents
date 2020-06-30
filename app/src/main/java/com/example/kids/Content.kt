@@ -37,7 +37,7 @@ class Content : AppCompatActivity() {
     private fun getContent() {
         val uuid: String? = intent.getStringExtra("uuid")
 
-        val url = "http:10.0.2.2:8000/api/tales/content/$uuid/tr"
+        val url = "http:10.0.2.2:8000/api/tales/content/tr/$uuid"
         val queue = Volley.newRequestQueue(this)
 
         val stringRequest = StringRequest(
